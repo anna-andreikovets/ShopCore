@@ -15,17 +15,23 @@ public class OrderController : ControllerBase
         _orderService = orderService;
     }
 
+    /// <summary>
+    /// Создание заказа
+    /// </summary>
     [HttpPost]
-    public async Task<IActionResult> CreateOrder([FromBody] OrderDto request)
+    public async Task<bool> CreateOrder([FromBody] OrderDto request)
     {
-        await _orderService.CreateOrderAsync(request.ProductId, request.Quantity);
-        return Ok();
+        var success = await _orderService.CreateOrderAsync(request);
+        return success;
     }
-
+    
+    /// <summary>
+    /// Отмена заказа
+    /// </summary>
     [HttpDelete("{id}")]
-    public async Task<IActionResult> CancelOrder(int id)
+    public async Task<bool> CancelOrder(int id)
     {
-        await _orderService.CancelOrderAsync(id);
-        return Ok();
+        var success = await _orderService.CancelOrderAsync(id);
+        return success;
     }
 }

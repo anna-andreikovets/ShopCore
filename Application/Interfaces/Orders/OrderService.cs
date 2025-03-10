@@ -1,15 +1,16 @@
+using ShopCore.API.DTOS.Orders;
 using ShopCore.Application.Services.Orders;
 
 namespace ShopCore.Application.Interfaces.Orders;
 
 public class OrderService : IOrderService
 {
-    public Task CreateOrderAsync(int productId, int quantity)
+    public Task<bool> CreateOrderAsync(OrderDto request)
     {
         throw new NotImplementedException();
     }
 
-    public Task CancelOrderAsync(int orderId)
+    public Task<bool> CancelOrderAsync(int orderId)
     {
         throw new NotImplementedException();
     }

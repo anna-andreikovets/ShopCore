@@ -5,22 +5,22 @@ namespace ShopCore.Application.Interfaces.Products;
 
 public class ProductService : IProductService
 {
-    public Task<ProductDto> GetByIdAsync(int id)
+    public Task<ProductDto?> GetByIdAsync(int id)
     {
         throw new NotImplementedException();
     }
 
-    public Task AddAsync(ProductDto product)
+    public Task<bool> AddAsync(ProductDto product)
     {
         throw new NotImplementedException();
     }
 
-    public Task UpdateAsync(ProductDto product)
+    public Task<bool> UpdateAsync(ProductDto product)
     {
         throw new NotImplementedException();
     }
 
-    public Task SoftDeleteAsync(int id)
+    public Task<bool> SoftDeleteAsync(int id)
     {
         throw new NotImplementedException();
     }

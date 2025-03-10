@@ -1,8 +1,10 @@
+using ShopCore.API.DTOS.Orders;
+
 namespace ShopCore.Application.Services.Orders;
 
 public interface IOrderService
 {
-    Task CreateOrderAsync(int productId, int quantity);
+    Task<bool> CreateOrderAsync(OrderDto request);
 
-    Task CancelOrderAsync(int orderId);
+    Task<bool> CancelOrderAsync(int orderId);
 }

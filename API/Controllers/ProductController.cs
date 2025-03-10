@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using ShopCore.API.DTOS.Api;
 using ShopCore.API.DTOS.Products;
 using ShopCore.Application.Services.Products;
 
@@ -15,46 +16,58 @@ public class ProductController : ControllerBase
         _productService = productService;
     }
     
+    /// <summary>
+    /// Получение продукта
+    /// </summary>
     [HttpGet("{id}")]
-    public async Task<IActionResult> GetById(int id)
+    public async Task<Response<ProductDto>> GetById(int id)
     {
         var product = await _productService.GetByIdAsync(id);
-        if (product == null)
-            return NotFound();
 
-        return Ok(product);
+        if (product == null)
+            return new Response<ProductDto>()
+            {
+                Success = false,
+                Message = "Не удалось добавить продукт!"
+            };
+
+        return new Response<ProductDto>()
+        {
+            Message = "Продукт был успешно добавлен!",
+            Result = product
+        };
     }
 
-    // Создание продукта
+    /// <summary>
+    /// Добавление продукта
+    /// </summary>
     [HttpPost]
-    public async Task<IActionResult> AddProduct([FromBody] ProductDto request)
+    public async Task<bool> AddProduct([FromBody] ProductDto request)
     {
-        await _productService.AddAsync(request);
-        return Ok();
+        var success = await _productService.AddAsync(request);
+        
+        return success;
     }
 
-    // Обновление продукта
+    /// <summary>
+    /// Обновление продукта
+    /// </summary>
     [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateProduct(int id, [FromBody] ProductDto request)
+    public async Task<bool> UpdateProduct(int id, [FromBody] ProductDto request)
     {
-        var product = await _productService.GetByIdAsync(id);
-        if (product == null)
-            return NotFound();
-
-        await _productService.UpdateAsync(request);
-        return Ok();
+        var success=  await _productService.UpdateAsync(request);
+        
+        return success;
     }
 
-    // Логическое удаление продукта
+    /// <summary>
+    /// Удаление продукта 
+    /// </summary>
     [HttpDelete("{id}")]
-    public async Task<IActionResult> SoftDeleteProduct(int id)
+    public async Task<bool> SoftDeleteProduct(int id)
     {
-        var product = await _productService.GetByIdAsync(id);
-        if (product == null)
-            return NotFound();
-
-        await _productService.SoftDeleteAsync(id);
-        return Ok();
+        var success = await _productService.SoftDeleteAsync(id);
+        
+        return success;
     }
-
 }
