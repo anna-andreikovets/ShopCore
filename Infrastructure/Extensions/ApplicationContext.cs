@@ -5,23 +5,25 @@ namespace ShopCore.Infrastructure.Extensions;
 
 public class ApplicationContext : DbContext
 {
-    private readonly IServiceProvider _serviceProvider;
-    
-    public ApplicationContext(DbContextOptions<ApplicationContext> options, IServiceProvider serviceProvider)
+    private readonly IConfiguration _configuration;
+
+    public ApplicationContext(DbContextOptions<ApplicationContext> options, IConfiguration configuration)
         : base(options)
     {
-        _serviceProvider = serviceProvider;
+        _configuration = configuration;
     }
-    
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        Database.EnsureCreated();
-        
-        var connectionString = "Server=localhost;Database=ShopDB;User Id=sa;Password=P@ssw0rd123;";
-        optionsBuilder.UseSqlServer(connectionString);
+        if (!optionsBuilder.IsConfigured)
+        {
+            // Получаем строку подключения из конфигурации
+            var connectionString = _configuration.GetConnectionString("DefaultConnection");
+            optionsBuilder.UseSqlServer(connectionString);
+        }
     }
-    
+
+    // DbSet для сущностей
     public DbSet<OrderEntity> Orders { get; set; }
-    
     public DbSet<ProductEntity> Products { get; set; }
 }
