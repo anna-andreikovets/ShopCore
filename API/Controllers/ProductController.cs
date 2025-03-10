@@ -42,7 +42,7 @@ public class ProductController : ControllerBase
     /// Добавление продукта
     /// </summary>
     [HttpPost]
-    public async Task<bool> AddProduct([FromBody] ProductDto request)
+    public async Task<bool> AddProduct([FromBody] NewProductDto request)
     {
         await _productService.AddAsync(request);
         
@@ -53,7 +53,7 @@ public class ProductController : ControllerBase
     /// Обновление продукта
     /// </summary>
     [HttpPut()]
-    public async Task<bool> UpdateProduct(int id, [FromBody] ProductDto request)
+    public async Task<bool> UpdateProduct([FromBody] ProductDto request)
     {
         var success = await _productService.UpdateAsync(request);
         

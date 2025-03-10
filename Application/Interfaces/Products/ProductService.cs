@@ -25,7 +25,7 @@ public class ProductService : IProductService
         return product;
     }
 
-    public async Task AddAsync(ProductDto product)
+    public async Task AddAsync(NewProductDto product)
     {
         var newProduct = new ProductEntity(product);
         

@@ -14,7 +14,7 @@ builder.Configuration.AddJsonFile("appsettings.json");
 builder.Services.AddDbContext<ApplicationContext>((serviceProvider, options) =>
 {
     var configuration = serviceProvider.GetRequiredService<IConfiguration>();
-    var connectionString = configuration.GetConnectionString("ConnectionString");
+    var connectionString = configuration.GetConnectionString("DefaultConnection");
     options.UseSqlServer(connectionString);
 });
 
