@@ -6,8 +6,7 @@ namespace ShopCore.Infrastructure.Extensions;
 public class ApplicationContext : DbContext
 {
     private readonly IServiceProvider _serviceProvider;
-
-
+    
     public ApplicationContext(DbContextOptions<ApplicationContext> options, IServiceProvider serviceProvider)
         : base(options)
     {
@@ -16,7 +15,10 @@ public class ApplicationContext : DbContext
     
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
+        Database.EnsureCreated();
         
+        var connectionString = "Server=localhost;Database=ShopDB;User Id=sa;Password=P@ssw0rd123;";
+        optionsBuilder.UseSqlServer(connectionString);
     }
     
     public DbSet<OrderEntity> Orders { get; set; }
