@@ -11,6 +11,8 @@ public class ApplicationContext : DbContext
         : base(options)
     {
         _configuration = configuration;
+        
+        Database.EnsureCreated();
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

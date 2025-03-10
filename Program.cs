@@ -31,6 +31,13 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
+// Применяем миграции при запуске
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<ApplicationContext>();
+    context.Database.Migrate(); // Применяем миграции и создаём БД, если нужно
+}
+
 // Настройка конвейера запросов
 if (app.Environment.IsDevelopment())
 {
