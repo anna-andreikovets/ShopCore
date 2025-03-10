@@ -11,9 +11,13 @@ public class ProductEntity
     public int Stock { get; set; }
     public DateTime? DeleteDate { get; set; }
 
-    public ProductEntity(ProductDto product)
+    public ProductEntity()
     {
-        Id = product.Id;
+        
+    }
+    
+    public ProductEntity(NewProductDto product)
+    {
         Name = product.Name;
         Description = product.Description;
         Price = product.Price;
