@@ -21,8 +21,9 @@ public class OrderController : ControllerBase
     [HttpPost]
     public async Task<bool> CreateOrder([FromBody] OrderDto request)
     {
-        var success = await _orderService.CreateOrderAsync(request);
-        return success;
+        await _orderService.CreateOrderAsync(request);
+        
+        return true;
     }
     
     /// <summary>
@@ -32,6 +33,7 @@ public class OrderController : ControllerBase
     public async Task<bool> CancelOrder(int id)
     {
         var success = await _orderService.CancelOrderAsync(id);
+        
         return success;
     }
 }

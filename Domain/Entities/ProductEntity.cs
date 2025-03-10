@@ -1,3 +1,5 @@
+using ShopCore.API.DTOS.Products;
+
 namespace ShopCore.Domain.Entities;
 
 public class ProductEntity
@@ -8,4 +10,14 @@ public class ProductEntity
     public decimal Price { get; set; }
     public int Stock { get; set; }
     public DateTime? DeleteDate { get; set; }
+
+    public ProductEntity(ProductDto product)
+    {
+        Id = product.Id;
+        Name = product.Name;
+        Description = product.Description;
+        Price = product.Price;
+        Stock = product.Stock;
+        DeleteDate = DateTime.Now;
+    }
 }

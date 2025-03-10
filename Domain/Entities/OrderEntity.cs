@@ -1,3 +1,4 @@
+using ShopCore.API.DTOS.Orders;
 using ShopCore.Domain.Enums;
 
 namespace ShopCore.Domain.Entities;
@@ -9,4 +10,10 @@ public class OrderEntity
     public int Quantity { get; set; }
     public OrderStatusEnum Status { get; set; }
     public DateTime CreatedDate { get; set; }
+
+    public OrderEntity(OrderDto order)
+    {
+        ProductId = order.ProductId;
+        Quantity = order.Quantity;
+    }
 }

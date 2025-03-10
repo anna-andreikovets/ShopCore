@@ -44,18 +44,18 @@ public class ProductController : ControllerBase
     [HttpPost]
     public async Task<bool> AddProduct([FromBody] ProductDto request)
     {
-        var success = await _productService.AddAsync(request);
+        await _productService.AddAsync(request);
         
-        return success;
+        return true;
     }
 
     /// <summary>
     /// Обновление продукта
     /// </summary>
-    [HttpPut("{id}")]
+    [HttpPut()]
     public async Task<bool> UpdateProduct(int id, [FromBody] ProductDto request)
     {
-        var success=  await _productService.UpdateAsync(request);
+        var success = await _productService.UpdateAsync(request);
         
         return success;
     }
