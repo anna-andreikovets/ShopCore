@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using ShopCore.API.DTOS.Api;
 using ShopCore.API.DTOS.Orders;
 using ShopCore.Application.Interfaces.Orders;
 
@@ -19,11 +20,23 @@ public class OrderController : ControllerBase
     /// Создание заказа
     /// </summary>
     [HttpPost]
-    public async Task<bool> CreateOrder([FromBody] OrderDto request)
+    public async Task<Response<bool>> CreateOrder([FromBody] OrderDto request)
     {
-        await _orderService.CreateOrderAsync(request);
+        var success = await _orderService.CreateOrderAsync(request);
+
+        if (!success)
+            return new Response<bool>()
+            {
+                Success = false,
+                Message = "Не удалось создать заказ!",
+                Result = success
+            };
         
-        return true;
+        return new Response<bool>()
+        {
+            Message = "Заказ был успешно создан",
+            Result = success
+        };
     }
     
     /// <summary>

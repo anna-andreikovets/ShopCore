@@ -21,6 +21,5 @@ public class ProductEntity
         Description = product.Description;
         Price = product.Price;
         Stock = product.Stock;
-        DeleteDate = DateTime.Now;
     }
 }

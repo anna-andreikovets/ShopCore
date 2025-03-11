@@ -28,12 +28,12 @@ public class ProductController : ControllerBase
             return new Response<ProductDto>()
             {
                 Success = false,
-                Message = "Не удалось добавить продукт!"
+                Message = "Не удалось получить продукт!"
             };
 
         return new Response<ProductDto>()
         {
-            Message = "Продукт был успешно добавлен!",
+            Message = "Продукт был успешно получен!",
             Result = product
         };
     }
@@ -53,7 +53,7 @@ public class ProductController : ControllerBase
     /// Обновление продукта
     /// </summary>
     [HttpPut()]
-    public async Task<bool> UpdateProduct([FromBody] ProductDto request)
+    public async Task<bool> UpdateProduct([FromBody] UpdateProductDto request)
     {
         var success = await _productService.UpdateAsync(request);
         

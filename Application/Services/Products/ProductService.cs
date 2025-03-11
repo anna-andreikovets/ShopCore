@@ -34,7 +34,7 @@ public class ProductService : IProductService
         await _context.SaveChangesAsync();
     }
 
-    public async Task<bool> UpdateAsync(ProductDto product)
+    public async Task<bool> UpdateAsync(UpdateProductDto product)
     {
         var oldProduct = _context.Products.FirstOrDefault(p => p.Id == product.Id);
 
@@ -45,7 +45,6 @@ public class ProductService : IProductService
         oldProduct.Description = product.Description;
         oldProduct.Price = product.Price;
         oldProduct.Stock = product.Stock;
-        oldProduct.DeleteDate = product.DeleteDate;
 
         await _context.SaveChangesAsync();
 
@@ -59,7 +58,7 @@ public class ProductService : IProductService
         if(product == null)
             return false;
         
-        product.DeleteDate = DateTime.Now;
+        product.DeleteDate = DateTime.UtcNow;
         
         await _context.SaveChangesAsync();
         

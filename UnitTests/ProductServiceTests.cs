@@ -1,47 +1,56 @@
+using Microsoft.EntityFrameworkCore;
 using Moq;
 using ShopCore.API.DTOS.Products;
-using ShopCore.Application.Interfaces.Products;
+using ShopCore.Application.Services.Products;
 using ShopCore.Domain.Entities;
+using ShopCore.Infrastructure.Extensions;
 using Xunit;
 
 namespace ShopCore.UnitTests;
 
 public class ProductServiceTests
 {
-    private readonly Mock<IProductService> _productServiceMock;
+    private readonly Mock<ApplicationContext> _contextMock;
+    private readonly ProductService _productService;
 
     public ProductServiceTests()
     {
-        _productServiceMock = new Mock<IProductService>();
+        _contextMock = new Mock<ApplicationContext>();
+        _productService = new ProductService(_contextMock.Object);
     }
-    
+
     [Fact]
     public async Task GetByIdAsync_ShouldReturnProduct_WhenProductExists()
     {
+        // Arrange
         var productId = 1;
         var productEntity = new ProductEntity
         {
-            Id = 1,
+            Id = productId,
             Name = "Product1",
             Description = "Description1",
             Price = 10.0m,
             Stock = 100
         };
-        var productDto = new ProductDto(productEntity);
 
-        _productServiceMock.Setup(service => service.GetByIdAsync(productId)).ReturnsAsync(productDto);
-        
-        var result = await _productServiceMock.Object.GetByIdAsync(productId);
-        
+        var mockDbSet = new Mock<DbSet<ProductEntity>>();
+        mockDbSet.Setup(db => db.FindAsync(productId)).ReturnsAsync(productEntity);
+        _contextMock.Setup(context => context.Products).Returns(mockDbSet.Object);
+
+        // Act
+        var result = await _productService.GetByIdAsync(productId);
+
+        // Assert
         Assert.NotNull(result);
         Assert.Equal(productId, result?.Id);
         Assert.Equal("Product1", result?.Name);
         Assert.Equal("Description1", result?.Description);
     }
-    
+
     [Fact]
     public async Task AddAsync_ShouldAddProductSuccessfully()
     {
+        // Arrange
         var newProductDto = new NewProductDto
         {
             Name = "New Product",
@@ -49,53 +58,123 @@ public class ProductServiceTests
             Price = 15.0m,
             Stock = 50
         };
-        
-        await _productServiceMock.Object.AddAsync(newProductDto);
-        
-        _productServiceMock.Verify(service => service.AddAsync(newProductDto), Times.Once);
+
+        var mockDbSet = new Mock<DbSet<ProductEntity>>();
+        _contextMock.Setup(context => context.Products).Returns(mockDbSet.Object);
+
+        // Act
+        await _productService.AddAsync(newProductDto);
+
+        // Assert
+        mockDbSet.Verify(db => db.AddAsync(It.IsAny<ProductEntity>(), default), Times.Once);
+        _contextMock.Verify(context => context.SaveChangesAsync(default), Times.Once);
     }
-    
+
     [Fact]
     public async Task UpdateAsync_ShouldReturnTrue_WhenProductIsUpdated()
     {
-        var productDto = new ProductDto(new ProductEntity
+        // Arrange
+        var productDto = new UpdateProductDto
         {
             Id = 1,
             Name = "Updated Product",
             Description = "Updated Description",
             Price = 20.0m,
             Stock = 200
-        });
+        };
 
-        _productServiceMock.Setup(service => service.UpdateAsync(productDto)).ReturnsAsync(true);
-        
-        var result = await _productServiceMock.Object.UpdateAsync(productDto);
-        
+        var productEntity = new ProductEntity
+        {
+            Id = productDto.Id,
+            Name = "Old Product",
+            Description = "Old Description",
+            Price = 10.0m,
+            Stock = 100
+        };
+
+        var mockDbSet = new Mock<DbSet<ProductEntity>>();
+        mockDbSet.Setup(db => db.FindAsync(productDto.Id)).ReturnsAsync(productEntity);
+        _contextMock.Setup(context => context.Products).Returns(mockDbSet.Object);
+
+        // Act
+        var result = await _productService.UpdateAsync(productDto);
+
+        // Assert
         Assert.True(result);
-        _productServiceMock.Verify(service => service.UpdateAsync(productDto), Times.Once);
+        Assert.Equal(productDto.Name, productEntity.Name);
+        Assert.Equal(productDto.Description, productEntity.Description);
+        Assert.Equal(productDto.Price, productEntity.Price);
+        Assert.Equal(productDto.Stock, productEntity.Stock);
+        _contextMock.Verify(context => context.SaveChangesAsync(default), Times.Once);
     }
-    
+
+    [Fact]
+    public async Task UpdateAsync_ShouldReturnFalse_WhenProductDoesNotExist()
+    {
+        // Arrange
+        var productDto = new UpdateProductDto
+        {
+            Id = 999,
+            Name = "Updated Product",
+            Description = "Updated Description",
+            Price = 20.0m,
+            Stock = 200
+        };
+
+        var mockDbSet = new Mock<DbSet<ProductEntity>>();
+        mockDbSet.Setup(db => db.FindAsync(productDto.Id)).ReturnsAsync((ProductEntity)null);
+        _contextMock.Setup(context => context.Products).Returns(mockDbSet.Object);
+
+        // Act
+        var result = await _productService.UpdateAsync(productDto);
+
+        // Assert
+        Assert.False(result);
+        _contextMock.Verify(context => context.SaveChangesAsync(default), Times.Never);
+    }
+
     [Fact]
     public async Task SoftDeleteAsync_ShouldReturnTrue_WhenProductIsSoftDeleted()
     {
-        int productId = 1;
-        _productServiceMock.Setup(service => service.SoftDeleteAsync(productId)).ReturnsAsync(true);
-        
-        var result = await _productServiceMock.Object.SoftDeleteAsync(productId);
-        
+        // Arrange
+        var productId = 1;
+        var productEntity = new ProductEntity
+        {
+            Id = productId,
+            Name = "Product1",
+            Description = "Description1",
+            Price = 10.0m,
+            Stock = 100
+        };
+
+        var mockDbSet = new Mock<DbSet<ProductEntity>>();
+        mockDbSet.Setup(db => db.FindAsync(productId)).ReturnsAsync(productEntity);
+        _contextMock.Setup(context => context.Products).Returns(mockDbSet.Object);
+
+        // Act
+        var result = await _productService.SoftDeleteAsync(productId);
+
+        // Assert
         Assert.True(result);
-        _productServiceMock.Verify(service => service.SoftDeleteAsync(productId), Times.Once);
+        Assert.NotNull(productEntity.DeleteDate);
+        _contextMock.Verify(context => context.SaveChangesAsync(default), Times.Once);
     }
-    
+
     [Fact]
     public async Task SoftDeleteAsync_ShouldReturnFalse_WhenProductDoesNotExist()
     {
-        int productId = 999;
-        _productServiceMock.Setup(service => service.SoftDeleteAsync(productId)).ReturnsAsync(false);
-        
-        var result = await _productServiceMock.Object.SoftDeleteAsync(productId);
-        
+        // Arrange
+        var productId = 999;
+
+        var mockDbSet = new Mock<DbSet<ProductEntity>>();
+        mockDbSet.Setup(db => db.FindAsync(productId)).ReturnsAsync((ProductEntity)null);
+        _contextMock.Setup(context => context.Products).Returns(mockDbSet.Object);
+
+        // Act
+        var result = await _productService.SoftDeleteAsync(productId);
+
+        // Assert
         Assert.False(result);
-        _productServiceMock.Verify(service => service.SoftDeleteAsync(productId), Times.Once);
+        _contextMock.Verify(context => context.SaveChangesAsync(default), Times.Never);
     }
 }
