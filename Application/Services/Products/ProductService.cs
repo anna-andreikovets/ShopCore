@@ -1,10 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using ShopCore.API.DTOS.Products;
-using ShopCore.Application.Services.Products;
+using ShopCore.Application.Interfaces.Products;
 using ShopCore.Domain.Entities;
 using ShopCore.Infrastructure.Extensions;
 
-namespace ShopCore.Application.Interfaces.Products;
+namespace ShopCore.Application.Services.Products;
 
 public class ProductService : IProductService
 {

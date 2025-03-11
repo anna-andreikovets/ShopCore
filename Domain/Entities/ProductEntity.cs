@@ -13,7 +13,6 @@ public class ProductEntity
 
     public ProductEntity()
     {
-        
     }
     
     public ProductEntity(NewProductDto product)

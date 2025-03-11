@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using ShopCore.API.DTOS.Orders;
-using ShopCore.Application.Services.Orders;
+using ShopCore.Application.Interfaces.Orders;
 
 namespace ShopCore.API.Controllers;
 

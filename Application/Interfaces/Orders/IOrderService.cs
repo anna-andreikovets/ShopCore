@@ -1,6 +1,6 @@
 using ShopCore.API.DTOS.Orders;
 
-namespace ShopCore.Application.Services.Orders;
+namespace ShopCore.Application.Interfaces.Orders;
 
 public interface IOrderService
 {

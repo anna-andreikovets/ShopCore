@@ -1,6 +1,6 @@
 using Moq;
 using ShopCore.API.DTOS.Orders;
-using ShopCore.Application.Services.Orders;
+using ShopCore.Application.Interfaces.Orders;
 using Xunit;
 
 namespace ShopCore.UnitTests;

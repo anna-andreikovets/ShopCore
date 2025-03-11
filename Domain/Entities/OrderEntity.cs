@@ -11,6 +11,10 @@ public class OrderEntity
     public OrderStatusEnum Status { get; set; }
     public DateTime CreatedDate { get; set; }
 
+    public OrderEntity()
+    {
+    }
+    
     public OrderEntity(OrderDto order)
     {
         ProductId = order.ProductId;

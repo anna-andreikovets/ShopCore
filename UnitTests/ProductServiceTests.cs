@@ -1,6 +1,6 @@
 using Moq;
 using ShopCore.API.DTOS.Products;
-using ShopCore.Application.Services.Products;
+using ShopCore.Application.Interfaces.Products;
 using ShopCore.Domain.Entities;
 using Xunit;
 

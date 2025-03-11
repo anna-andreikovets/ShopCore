@@ -1,22 +1,34 @@
+using FluentMigrator.Runner;
 using Microsoft.EntityFrameworkCore;
 using ShopCore.Application.Interfaces.Orders;
 using ShopCore.Application.Interfaces.Products;
 using ShopCore.Application.Services.Orders;
 using ShopCore.Application.Services.Products;
 using ShopCore.Infrastructure.Extensions;
+using ShopCore.Infrastructure.Migrations.Orders;
+using ShopCore.Infrastructure.Migrations.Products;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Добавление конфигурации
-builder.Configuration.AddJsonFile("appsettings.json");
-
-// Регистрация ApplicationContext в DI
+// Регистрация контекста базы данных с использованием Npgsql (PostgreSQL)
 builder.Services.AddDbContext<ApplicationContext>((serviceProvider, options) =>
 {
     var configuration = serviceProvider.GetRequiredService<IConfiguration>();
     var connectionString = configuration.GetConnectionString("DefaultConnection");
-    options.UseSqlServer(connectionString);
+    options.UseNpgsql(connectionString);
 });
+
+// Настройка FluentMigrator для PostgreSQL
+builder.Services.AddFluentMigratorCore()
+    .ConfigureRunner(rb =>
+    {
+        rb
+            .AddPostgres()
+            .WithGlobalConnectionString(builder.Configuration.GetConnectionString("DefaultConnection"))
+            .ScanIn(typeof(Products_2025_03_10_1656).Assembly).For.Migrations()
+            .ScanIn(typeof(Orders_2025_03_10_1650).Assembly).For.Migrations();
+    })
+    .AddLogging(lb => lb.AddConsole());
 
 // Регистрация сервисов
 builder.Services.AddScoped<IProductService, ProductService>();
@@ -35,7 +47,10 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<ApplicationContext>();
-    context.Database.Migrate(); // Применяем миграции и создаём БД, если нужно
+    context.Database.Migrate();
+    
+    var runner = scope.ServiceProvider.GetRequiredService<IMigrationRunner>();
+    runner.MigrateUp();
 }
 
 // Настройка конвейера запросов

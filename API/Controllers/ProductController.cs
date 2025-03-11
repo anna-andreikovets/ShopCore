@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using ShopCore.API.DTOS.Api;
 using ShopCore.API.DTOS.Products;
-using ShopCore.Application.Services.Products;
+using ShopCore.Application.Interfaces.Products;
 
 namespace ShopCore.API.Controllers;
 

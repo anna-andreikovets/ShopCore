@@ -1,11 +1,11 @@
 using Microsoft.EntityFrameworkCore;
 using ShopCore.API.DTOS.Orders;
-using ShopCore.Application.Services.Orders;
+using ShopCore.Application.Interfaces.Orders;
 using ShopCore.Domain.Entities;
 using ShopCore.Domain.Enums;
 using ShopCore.Infrastructure.Extensions;
 
-namespace ShopCore.Application.Interfaces.Orders;
+namespace ShopCore.Application.Services.Orders;
 
 public class OrderService : IOrderService
 {

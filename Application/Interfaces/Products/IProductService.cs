@@ -1,6 +1,6 @@
 using ShopCore.API.DTOS.Products;
 
-namespace ShopCore.Application.Services.Products;
+namespace ShopCore.Application.Interfaces.Products;
 
 public interface IProductService
 {
